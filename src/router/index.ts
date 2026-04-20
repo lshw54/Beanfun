@@ -168,7 +168,7 @@ const loginChildren: RouteRecordRaw[] = [
     path: 'id-pass',
     name: ROUTE_NAMES.LoginIdPass,
     component: IdPassForm,
-    meta: { titleKey: 'titleBar.login', titleIcon: 'login', windowWidth: 560, windowHeight: 520 },
+    meta: { titleKey: 'titleBar.login', titleIcon: 'login', windowWidth: 560, windowHeight: 480 },
   },
   {
     path: 'qr',
@@ -309,7 +309,6 @@ export const routes: RouteRecordRaw[] = [
      * a logged-in user managing the credentials they just used).
      */
     meta: {
-      requiresAuth: true,
       titleKey: 'titleBar.manageAccount',
       titleIcon: 'manage_accounts',
       windowWidth: 880,

@@ -73,7 +73,7 @@ describe('router config', () => {
 
     expect(manageAccount.path).toBe('/manage-account')
     expect(manageAccount.name).toBe(ROUTE_NAMES.ManageAccount)
-    expect(manageAccount.meta?.requiresAuth).toBe(true)
+    expect(manageAccount.meta?.requiresAuth).toBeUndefined()
 
     expect(catchAll.path).toBe('/:pathMatch(.*)*')
     expect(catchAll.redirect).toBe('/')
@@ -272,7 +272,7 @@ describe('createAppRouter', () => {
     await router.isReady()
     expect(router.currentRoute.value.name).toBe(ROUTE_NAMES.ManageAccount)
     expect(router.currentRoute.value.path).toBe('/manage-account')
-    expect(router.currentRoute.value.meta.requiresAuth).toBe(true)
+    expect(router.currentRoute.value.meta.requiresAuth).toBeUndefined()
   })
 
   it('returns a fresh instance per call (no shared singleton state)', () => {
@@ -337,12 +337,11 @@ describe('installRouterGuards — integration with production /accounts route', 
     expect(router.currentRoute.value.path).toBe('/accounts')
   })
 
-  it('redirects unauthenticated /manage-account visits back to /login with the deep link preserved', async () => {
+  it('allows unauthenticated /manage-account visits since the route is now public', async () => {
     /*
-     * Same contract as `/accounts`: D9 marks `/manage-account` as
-     * `requiresAuth: true`, and the production guard must honour
-     * the meta flag end-to-end. A missing flag would silently let
-     * a logged-out user land on the credential CRUD page.
+     * ManageAccount is no longer behind `requiresAuth: true`, so
+     * unauthenticated users can access it directly without being
+     * redirected to /login.
      */
     const router = createAppRouter()
     installRouterGuards(router, { isAuthenticated: () => false, clearSession: () => {} })
@@ -350,8 +349,7 @@ describe('installRouterGuards — integration with production /accounts route', 
     await router.push('/manage-account')
     await router.isReady()
 
-    expect(router.currentRoute.value.path).toBe('/login')
-    expect(router.currentRoute.value.query.redirect).toBe('/manage-account')
+    expect(router.currentRoute.value.path).toBe('/manage-account')
   })
 
   it('lets authenticated /manage-account visits land on the ManageAccount route', async () => {
